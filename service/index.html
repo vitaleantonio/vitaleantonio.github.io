@@ -4,26 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Antonio Vitale | Service</title>
+  <script>
+    /* Dark by default; a theme the visitor picked with the toggle wins. Applied before first paint */
+    document.documentElement.dataset.theme = "dark";
+    try {
+      document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+    } catch (e) {}
+  </script>
 
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
   />
 
   <link rel="stylesheet" href="/assets/css/style.css" />
 
   <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   />
 </head>
 <body>
   <nav class="navbar">
-    <div class="nav-logo">
-      <a href="/">
-        Antonio Vitale
-      </a>
-    </div>
     <div class="hamburger-menu" id="hamburger-menu">
       <i class="fas fa-bars"></i>
     </div>
@@ -33,49 +35,89 @@
       <li><a href="/publications"><i class="fas fa-book"></i> Publications</a></li>
       <li><a href="/service" class="active"><i class="fas fa-hands-helping"></i> Service</a></li>
     </ul>
+
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark theme">
+      <i class="fas fa-moon"></i>
+      <i class="fas fa-sun"></i>
+    </button>
   </nav>
 
   <main class="content">
+    <!-- One block per venue. For a new year at the same venue, add one <li> at the top of its list. -->
     <section class="page-section">
-      <h2>Reviewing</h2>
+      <h2>Journals</h2>
       <div class="publications-section">
 
-        <div class="publication-card">
-          <h3 class="title">RASE 2026</h3>
-          <p class="review-role"><strong>Reviewer</strong></p>
-          <p class="publication-journal">Reliable and Trustworthy Automated Software Engineering (RASE)</p>
+        <div class="publication-card service-venue">
+          <h3 class="title">Transactions on Software Engineering and Methodology (TOSEM)</h3>
+          <ul class="service-years">
+            <li><span class="service-role">Reviewer</span></li>
+          </ul>
         </div>
 
-        <hr />
-
-        <div class="publication-card">
-          <h3 class="title">ReSAISE 2026</h3>
-          <p class="review-role"><strong>Reviewer</strong></p>
-          <p class="publication-journal">4th IEEE International Workshop on Reliable and Secure AI for Software Engineering (ReSAISE)</p>
+        <div class="publication-card service-venue">
+          <h3 class="title">Transactions on Computing Education (TOCE)</h3>
+          <ul class="service-years">
+            <li><span class="service-role">Reviewer</span></li>
+          </ul>
         </div>
 
-        <hr />
-
-        <div class="publication-card">
-          <h3 class="title">ICSME 2026</h3>
-          <p class="review-role"><strong>Reviewer</strong></p>
-          <p class="publication-journal">International Conference on Software Maintenance and Evolution (ICSME) 2026 - Tool Demonstration and Data Showcase Track</p>
+        <div class="publication-card service-venue">
+          <h3 class="title">Information and Software Technology (IST)</h3>
+          <ul class="service-years">
+            <li><span class="service-role">Reviewer</span></li>
+          </ul>
         </div>
 
-        <hr />
+      </div>
+    </section>
 
-        <div class="publication-card">
-          <h3 class="title">NLBSE 2026</h3>
-          <p class="review-role"><strong>Reviewer</strong></p>
-          <p class="publication-journal">5th International Workshop on Natural Language-based Software Engineering (NLBSE)</p>
+    <section class="page-section">
+      <h2>Conferences</h2>
+      <div class="publications-section">
+
+        <div class="publication-card service-venue">
+          <h3 class="title">International Conference on AI Foundation Models and Software Engineering (FORGE)</h3>
+          <ul class="service-years">
+            <li><span class="service-year">2027</span> <span class="service-role">Reviewer</span> Research Papers Track</li>
+          </ul>
         </div>
 
-        <hr />
+        <div class="publication-card service-venue">
+          <h3 class="title">International Conference on Software Maintenance and Evolution (ICSME)</h3>
+          <ul class="service-years">
+            <li><span class="service-year">2026</span> <span class="service-role">Reviewer</span> Tool Demonstration and Data Showcase Track</li>
+            <li><span class="service-year">2024</span> <span class="service-role">Reviewer</span> Artifact Evaluation Track and ROSE Festival</li>
+          </ul>
+        </div>
 
-        <div class="publication-card">
-          <h3 class="title">ICSME 2024</h3>
-          <p class="review-role"><strong>Reviewer</strong></p>
-          <p class="publication-journal">International Conference on Software Maintenance and Evolution (ICSME) 2024 - Artifact Evaluation Track and ROSE Festival</p>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <h2>Workshops</h2>
+      <div class="publications-section">
+
+        <div class="publication-card service-venue">
+          <h3 class="title">International Workshop on Natural Language-based Software Engineering (NLBSE)</h3>
+          <ul class="service-years">
+            <li><span class="service-year">2027</span> <span class="service-role">Reviewer</span></li>
+            <li><span class="service-year">2026</span> <span class="service-role">Reviewer</span></li>
+          </ul>
+        </div>
+
+        <div class="publication-card service-venue">
+          <h3 class="title">Reliable and Trustworthy Automated Software Engineering (RASE)</h3>
+          <ul class="service-years">
+            <li><span class="service-year">2026</span> <span class="service-role">Reviewer</span></li>
+          </ul>
+        </div>
+
+        <div class="publication-card service-venue">
+          <h3 class="title">International Workshop on Reliable and Secure AI for Software Engineering (ReSAISE)</h3>
+          <ul class="service-years">
+            <li><span class="service-year">2026</span> <span class="service-role">Reviewer</span></li>
+          </ul>
         </div>
 
       </div>

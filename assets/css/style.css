@@ -1,27 +1,113 @@
+/* ==========================================================================
+   Design tokens
+   Light and dark themes, one green accent, Poppins throughout.
+   ========================================================================== */
+
+:root {
+    --accent: #1E8A5F;
+    --accent-ink: #176B4A;   /* darker shade, safe for text on white */
+    --accent-tint: #EAF4EF;
+    --accent-line: #C9E3D6;
+
+    --ink: #1D2321;
+    --body: #3A413E;
+    --muted: #66706B;
+    --rule: #E7EBE9;
+    --surface: #F6F8F7;
+    --paper: #FFFFFF;
+    --nav-bg: rgba(255, 255, 255, 0.8);
+    --on-accent: #FFFFFF;
+    --bg-line: #0D6340; /* background network: a deeper green reads better on white */
+
+    --font-display: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --radius-sm: 6px;
+    --radius: 14px;
+    --nav-h: 64px;
+
+    /* One page frame for every page: the navbar and the content share these edges */
+    --page-w: 1280px;
+    --gutter: 1.5rem;
+    --page-top: clamp(1.5rem, 4vw, 3rem);
+
+    color-scheme: light;
+}
+
+/* Dark theme (the default), set on <html data-theme="dark"> before first paint and by the toggle */
+:root[data-theme="dark"] {
+    --accent: #3DBE84;
+    --accent-ink: #5FD39E;
+    --accent-tint: rgba(61, 190, 132, 0.14);
+    --accent-line: rgba(61, 190, 132, 0.38);
+
+    --ink: #EEF2F0;
+    --body: #C5CDC9;
+    --muted: #8F9A95;
+    --rule: #252B29;
+    --surface: #181D1B;
+    --paper: #0E1110;
+    --nav-bg: rgba(14, 17, 16, 0.78);
+    --on-accent: #0E1110;
+    --bg-line: #3DBE84;
+
+    color-scheme: dark;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden; /* the soft glows may extend past the window edge; never scroll sideways to them */
+    scrollbar-gutter: stable; /* short and long pages keep the same width */
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
 html, body {
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    font-size: 16px;
+    font-family: var(--font-body);
+    font-size: 1rem;
     line-height: 1.6;
-    background-color: #f2f2f2;
+    color: var(--body);
+    background-color: var(--paper);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+    background-color: var(--accent-tint);
+    color: var(--ink);
+}
+
+a {
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(12px);
     }
     to {
         opacity: 1;
@@ -29,49 +115,133 @@ body {
     }
 }
 
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
 .navbar {
-    position: relative;
-    background-color: #1a5943;
-    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    padding: 0 max(var(--gutter), calc((100% - var(--page-w)) / 2 + var(--gutter)));
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    gap: 1.25rem;
+    background-color: var(--nav-bg);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+    backdrop-filter: saturate(160%) blur(12px);
+    border-bottom: 1px solid var(--rule);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.nav-logo a {
-    font-size: 1.8rem;
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
+/* Links (or the hamburger, on small screens) on the left, in line with the content; theme toggle on the right */
 .nav-links {
+    order: 1;
     display: flex;
     list-style: none;
-    gap: 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.nav-links li {
-    margin-left: 1.5rem;
+    gap: 2rem;
 }
 
 .nav-links a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 500;
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 1rem;
-    transition: color 0.3s ease;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 0.2s ease;
+}
+
+.nav-links a i {
+    display: none;
+    width: 1.1em;
+    text-align: center;
+}
+
+/* Underline indicator that grows in on hover, stays on the active page */
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 1px;
+    background-color: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+}
+
+.nav-links a:hover {
+    color: var(--ink);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+    transform: scaleX(1);
+}
+
+.nav-links a.active {
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.theme-toggle {
+    order: 2;
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--rule);
+    border-radius: 50%;
+    font-size: 0.95rem;
+    color: var(--muted);
+    background-color: transparent;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.4s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--accent-ink);
+    border-color: var(--accent-line);
+    transform: rotate(20deg);
+}
+
+.theme-toggle .fa-sun,
+:root[data-theme="dark"] .theme-toggle .fa-moon {
+    display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .fa-sun {
+    display: inline-block;
 }
 
 .hamburger-menu {
+    order: -1;
     display: none;
-    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    color: var(--ink);
     cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.hamburger-menu:hover {
+    background-color: var(--surface);
 }
 
 .nav-links.hidden {
@@ -81,302 +251,890 @@ body {
 .nav-links.show {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    background-color: #1a5943;
+    gap: 0.15rem;
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    padding: 1rem;
-    border-radius: 8px;
+    top: calc(100% + 0.5rem);
+    left: var(--gutter);
+    right: auto;
+    min-width: 230px;
+    padding: 0.5rem;
+    background-color: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 32px rgba(29, 35, 33, 0.12);
     z-index: 999;
+    animation: fadeIn 0.2s ease both;
+}
+
+.nav-links.show a {
+    display: flex;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+}
+
+.nav-links.show a::after {
+    display: none;
+}
+
+.nav-links.show a i {
+    display: inline-block;
+}
+
+.nav-links.show a:hover {
+    background-color: var(--surface);
+}
+
+.nav-links.show a.active {
+    color: var(--accent-ink);
+    background-color: var(--accent-tint);
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+
+.content {
+    width: 100%;
+    max-width: var(--page-w);
+    margin: 0 auto;
+    padding: var(--page-top) var(--gutter) 5rem;
+    animation: fadeIn 0.7s ease both;
+}
+
+/* Home: the hero columns are shared with the news list below */
+.content:has(> .home-section) {
+    --photo-size: clamp(210px, 24vw, 250px); /* never narrower than the social row */
+    --hero-gap: clamp(2rem, 5vw, 4.5rem);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: var(--rule);
+}
+
+.home-section,
+.news,
+.page-section {
+    margin-bottom: 2.75rem;
+}
+
+/* Section titles: heavy display face over a short accent rule */
+.news h2,
+.page-section h1,
+.page-section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 3vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+}
+
+.news h2::after,
+.page-section h1::after,
+.page-section h2::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 3px;
+    margin-top: 0.75rem;
+    border-radius: 2px;
+    background-color: var(--accent);
+    transform-origin: left;
+}
+
+/* The rule draws in when the heading scrolls into view (see script.js) */
+h2.reveal.is-visible::after {
+    animation: drawRule 0.8s 0.2s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+/* ==========================================================================
+   Links and inline emphasis
+   ========================================================================== */
+
+.custom-link,
+.custom-link:visited {
+    color: var(--accent-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--accent-line);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s ease;
+}
+
+.custom-link:hover {
+    color: var(--accent-ink);
+    text-decoration-color: var(--accent);
+}
+
+.subtle-bold {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+/* ==========================================================================
+   Home: hero
+   ========================================================================== */
+
+.home-section {
+    position: relative;
+    isolation: isolate;
+    margin-bottom: 2.5rem;
+}
+
+/* Soft green light drifting behind the photo */
+.home-section::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -20% -15% -10% -15%;
+    background: radial-gradient(closest-side at 22% 45%, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+    filter: blur(30px);
+    pointer-events: none;
+    animation: drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+    from { transform: translate3d(-3%, 2%, 0) scale(1); }
+    to { transform: translate3d(4%, -3%, 0) scale(1.08); }
+}
+
+/* Top-aligned: the photo starts level with the top of the name's capitals */
+.profile-intro {
+    --name-size: clamp(1.9rem, 3.6vw, 2.5rem);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hero-gap);
+}
+
+.profile-left {
+    position: relative;
+    flex-shrink: 0;
+    margin-top: calc(var(--name-size) * 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Rotating gradient ring around the photo, with a blurred halo behind it */
+@property --ring-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes spin {
+    to { --ring-angle: 360deg; }
+}
+
+.profile-left img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: var(--photo-size);
+    height: var(--photo-size);
+    border-radius: 50%;
+    object-fit: cover;
+    padding: 6px;
+    border: 2px solid transparent;
+    background:
+        linear-gradient(var(--paper), var(--paper)) padding-box,
+        conic-gradient(from var(--ring-angle), var(--accent), var(--accent-line), var(--accent), var(--accent-line), var(--accent)) border-box;
+    box-shadow: 0 18px 40px -14px rgba(29, 35, 33, 0.3);
+    animation: spin 10s linear infinite;
+}
+
+.profile-left::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: calc(var(--photo-size) + 20px);
+    height: calc(var(--photo-size) + 20px);
+    margin-left: calc((var(--photo-size) + 20px) / -2);
+    border-radius: 50%;
+    background: conic-gradient(from var(--ring-angle), transparent, color-mix(in srgb, var(--accent) 55%, transparent), transparent 45%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 90%);
+    filter: blur(16px);
+    animation: spin 10s linear infinite;
 }
 
 .social-row {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 0.6rem;
 }
 
 .social-row a {
-    color: #1a5943;
-    font-size: 1.5rem;
-    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    color: var(--ink);
+    background-color: var(--paper);
+    border: 1px solid var(--rule);
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .social-row a:hover {
-    color: #866e45;
-}
-
-.fixed-footer {
-    background-color: #1a5943;
-    color: #ffffff;
-    text-align: center;
-    padding: 0.4rem 0;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    margin-top: auto;
-}
-
-.content {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem;
-    animation: fadeIn 0.6s ease both;
-}
-
-hr {
-    color: #1a5943;
-    border-top: 1px solid #1a5943;
-
-}
-
-.home-section,
-.news,
-.page-section {
-    background-color: #ffffff;
-    border: 2px solid #1a5943;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    margin-bottom: 2rem;
-    padding: 2rem;
-}
-
-.profile-intro {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-}
-
-.profile-left {
-    width: 280px;
-    text-align: center;
-    margin-right: 2rem;
-}
-
-.profile-left img {
-    width: 230px;
-    height: 230px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #1a5943;
-    margin-bottom: 1rem;
+    color: var(--on-accent);
+    background-color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
 }
 
 .profile-right {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: justify;
-    margin-bottom: 0.5rem;
-    margin-right: 1.5rem;
+    align-items: flex-start;
 }
 
 .profile-intro h1 {
-    font-size: 2rem;
-    color: #1a5943;
-    margin-bottom: 0.5rem;
+    position: relative;
+    font-family: var(--font-display);
+    font-size: var(--name-size);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    color: var(--ink);
 }
 
+/* A second, softer light that sits behind the name itself, whatever its size or position */
+.profile-intro h1::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -110% -25%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 26%, transparent), transparent);
+    filter: blur(22px);
+    pointer-events: none;
+    animation: drift 16s ease-in-out infinite alternate;
+}
+
+/* Plain subtitle under the name */
 .profile-intro h2 {
-    font-size: 1.5rem;
-    color: #1a5943;
-    margin-bottom: 0.5rem;
+    margin-top: 0.6rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--muted);
 }
 
-.custom-link {
-    color: #1a5943;
-    text-decoration: none;
-    font-weight: bold;
+/* Short accent rule under the title block */
+.profile-intro h2::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 4px;
+    margin: 1.2rem 0 1.5rem;
+    border-radius: 2px;
+    background-color: var(--accent);
+    transform-origin: left;
+    animation: drawRule 0.9s 0.4s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-.custom-link:visited {
-    color: #1a5943;
-    font-weight: bold;
+@keyframes drawRule {
+    from { transform: scaleX(0); }
 }
 
-.custom-link:hover {
-    font-weight: bold;
-    color: #866e45;
+.profile-right p {
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--body);
 }
 
-.subtle-bold {
-    font-weight: bold;
-    color: #000000;
+.profile-right p + p {
+    margin-top: 0.7rem;
+}
+
+/* ==========================================================================
+   Timelines (home news, about education)
+   A thin rule with a dot per entry; the most recent entry is filled.
+   ========================================================================== */
+
+.news ul,
+.education-section {
+    position: relative;
+}
+
+.news ul::before,
+.education-section::before {
+    content: "";
+    position: absolute;
+    top: 0.6rem;
+    bottom: 0.6rem;
+    left: 5px;
+    width: 2px;
+    border-radius: 1px;
+    background: linear-gradient(to bottom, var(--accent-line), var(--rule) 30%, var(--rule) 85%, transparent);
+}
+
+.news li::before,
+.education-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    box-sizing: border-box; /* 12px including border, centred on the 2px rule at 5px */
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--paper);
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 0 4px var(--paper);
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.news li:first-child::before,
+.education-card:first-of-type::before,
+.news li:hover::before,
+.education-card:hover::before {
+    background-color: var(--accent);
+}
+
+.news ul {
+    list-style: none;
+    margin: 0;
+}
+
+/* Date and text run on together in one line */
+.news li {
+    --row-pad: 0.4rem;
+    --first-line: 1.5rem; /* height of the first text line */
+    position: relative;
+    padding: var(--row-pad) 0 var(--row-pad) 2.1rem;
+    line-height: 1.5;
+    color: var(--body);
+}
+
+/* Centre each dot on the first line of its entry */
+.news li::before {
+    top: calc(var(--row-pad) + var(--first-line) / 2 - 6px);
 }
 
 .news strong {
-    color: #1a5943;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    margin-right: 0.2rem;
 }
 
-.news h2,
-.page-section h1,
-.page-section h2 {
-    color: #1a5943;
-    margin-bottom: 1rem;
-}
-
-.news ul,
-.page-section ul,
-.page-section ol {
-    margin-left: 1.5rem;
-    line-height: 1.8;
-    color: #000000;
-}
+/* ==========================================================================
+   About: education
+   ========================================================================== */
 
 .education-section {
     display: flex;
     flex-direction: column;
-    margin-top: 1.5rem;
+    gap: 1.6rem;
+    padding-left: 2.1rem;
+}
+
+.education-section hr {
+    display: none;
 }
 
 .education-card {
-    padding: 1rem;
-    background-color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
+    position: relative;
+}
+
+/* Centre the dot on the title line (1.25rem at line-height 1.25) */
+.education-card::before {
+    left: -2.1rem;
+    top: calc(1.25rem * 1.25 / 2 - 6px);
 }
 
 .education-card h3 {
-    font-weight: bold;
-    color: #1a5943;
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
 }
 
 .education-card h4 {
-    color: #000000;
-    font-size: 1rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
     margin-bottom: 0.5rem;
 }
 
+.education-card p i,
 .education-card p em {
-    color: #000000;
-    font-style: italic;
+    color: var(--ink);
 }
 
-.content.publications-page {
-    max-width: 95vw;
-    width: 2000px;
+/* ==========================================================================
+   Lists: search box and filter chips (built by script.js)
+   ========================================================================== */
+
+[hidden] {
+    display: none !important;
 }
+
+.list-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+}
+
+.list-search {
+    position: relative;
+    flex: 1 1 18rem;
+    max-width: 26rem;
+}
+
+.list-search i {
+    position: absolute;
+    left: 1.05rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.list-search input {
+    width: 100%;
+    height: 44px;
+    padding: 0 2.75rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background-color: var(--surface);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.list-search input::placeholder {
+    color: var(--muted);
+}
+
+.list-search input:focus {
+    background-color: var(--paper);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-tint);
+}
+
+/* "/" shortcut hint, hidden while the box is in use */
+.list-search kbd {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.2rem 0.45rem;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--muted);
+    background-color: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 5px;
+    pointer-events: none;
+}
+
+.list-search input:focus ~ kbd,
+.list-search input:not(:placeholder-shown) ~ kbd {
+    display: none;
+}
+
+.list-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 36px;
+    padding: 0 0.95rem;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--body);
+    background-color: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.chip span {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.chip:hover {
+    color: var(--accent-ink);
+    border-color: var(--accent-line);
+}
+
+.chip[aria-pressed="true"] {
+    color: var(--on-accent);
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.chip[aria-pressed="true"] span {
+    color: inherit;
+    opacity: 0.8;
+}
+
+.chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.list-status {
+    min-height: 1.4rem;
+    margin: 0.5rem 0 0.9rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+}
+
+/* Number of entries next to a section title */
+.section-count {
+    margin-left: 0.45rem;
+    vertical-align: super;
+    font-size: 0.5em;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--muted);
+}
+
+/* Matched words (CSS Custom Highlight API) */
+::highlight(search) {
+    color: var(--ink);
+    background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* ==========================================================================
+   Publications: table-like rows (ID, title and authors, venue, year, media)
+   ========================================================================== */
 
 .publications-columns {
     display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 2.75rem;
 }
 
 .publications-column {
-    flex: 1 1 0;
-    min-width: 0;
-    padding: 1.5rem;
-}
-
-.publications-column h2 {
-    border-bottom: 2px solid #1a5943;
-    padding-bottom: 0.75rem;
+    margin-bottom: 0;
 }
 
 .publications-section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0;
 }
 
 .publication-card {
-    padding: 1rem;
-    background-color: #ffffff;
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-    border: 1px solid #e2e2e2;
-    border-radius: 8px;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    --row-inset: 1rem;
+    position: relative;
+    isolation: isolate;
+    margin: 0 calc(var(--row-inset) * -1);
+    padding: 0.5rem var(--row-inset);
+    border-radius: var(--radius);
+    transition: background-color 0.25s ease;
+}
+
+/* Spotlight that follows the cursor (--mx/--my set in script.js) */
+.publication-card::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .publication-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
-    border-color: #1a5943;
+    background-color: var(--surface);
 }
 
-.publication-header {
+.publication-card:hover::before {
+    opacity: 1;
+}
+
+/* Table-like rows: ID, title and authors, venue, year */
+.publications-page .publication-card,
+.pub-head {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 6.5rem 2.75rem 6.6rem;
+    column-gap: 1.25rem;
+    align-items: baseline;
+}
+
+.publications-page .publication-card {
+    padding-block: 0.7rem;
+    border-radius: 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.pub-head {
+    margin: 0 -1rem;
+    padding: 0 1rem 0.5rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.pub-year {
+    text-align: right;
+}
+
+.pub-id {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.publications-page .title a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.publications-page .title a:hover {
+    color: var(--accent-ink);
+    text-decoration-color: var(--accent-line);
+}
+
+/* Media column: small round icon links (DOI, PDF, slides), named by their tooltip */
+.pub-media {
+    align-self: start;
+    margin-top: -3px; /* centre the 30px icons on the title's first line */
+    gap: 0.3rem;
+}
+
+.pub-venue {
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 1rem;
+    gap: 0.25rem;
 }
 
-.badge {
-    background-color: #2f6b4f;
-    color: #ffffff;
-    font-weight: bold;
+.pub-venue .badge {
+    min-width: 4.4rem;
+    text-align: center;
+}
+
+.pub-track {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--muted);
+}
+
+.pub-year {
+    font-family: var(--font-display);
     font-size: 0.9rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 4px;
-    margin-right: 1rem;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
+    font-weight: 600;
+    color: var(--body);
+    font-variant-numeric: tabular-nums;
 }
 
-.badge-journal {
-    background-color: #358058;
+/* Venue chip, solid accent */
+.badge {
+    display: inline-block;
+    padding: 0.28rem 0.65rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--on-accent);
+    background-color: var(--accent-ink);
 }
 
 .title {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
-    color: #1a5943;
-    font-weight: bold;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 0.15rem;
 }
 
 .publication-authors {
-    color: #000000;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.review-role {
-    color: #1a5943;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--body);
+    margin-bottom: 0.05rem;
 }
 
 .highlight-name {
-    font-weight: bold;
-    color: #1a5943;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
 }
 
-.publication-journal {
-    color: #000000;
-    font-style: italic;
-    font-size: 1rem;
-    margin-bottom: 1rem;
-}
 
 .publication-links {
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
 }
 
 .icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    background-color: var(--paper);
+    border: 1px solid var(--rule);
     text-decoration: none;
-    color: #1a5943;
-    font-size: 1rem;
-    background-color: #f2f2f2;
-    padding: 0.35rem 0.6rem;
-    border-radius: 4px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-link i {
+    color: var(--accent-ink);
 }
 
 .icon-link:hover {
-    background-color: #1a5943;
-    color: #ffffff;
+    color: var(--on-accent);
+    background-color: var(--accent);
+    border-color: var(--accent);
 }
 
+.icon-link:hover i {
+    color: inherit;
+}
+
+/* ==========================================================================
+   Service: one row per venue, with the years listed under its name
+   ========================================================================== */
+
+/* Venue name, then one short line per year */
+.service-venue .title {
+    margin-bottom: 0;
+}
+
+.service-years {
+    list-style: none;
+    margin: 0.15rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.service-years li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.75rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--muted);
+}
+
+.service-year {
+    min-width: 2.6rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--accent-ink);
+    font-variant-numeric: tabular-nums;
+}
+
+.service-role {
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background-color: var(--accent-tint);
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.fixed-footer {
+    margin-top: auto;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+/* Roomier side margins on tablets and small laptops, where the page touches the window edges */
+@media (max-width: 1100px) {
+    :root {
+        --gutter: 2.5rem;
+    }
+}
 
 @media (max-width: 768px) {
+    :root {
+        --nav-h: 58px;
+        --gutter: 1.5rem;
+    }
+
+    body {
+        font-size: 1rem;
+    }
+
+    .navbar {
+        padding: 0 var(--gutter) 0 calc(var(--gutter) - 0.75rem); /* line the hamburger icon up with the content */
+    }
+
     .hamburger-menu {
         display: block;
     }
@@ -385,49 +1143,202 @@ hr {
         display: none;
     }
 
+    .content {
+        padding: var(--page-top) var(--gutter) 4rem;
+    }
+
     .profile-intro {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .profile-left,
-    .profile-right {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 1rem;
+        flex-direction: column;
+        align-items: center;
         text-align: center;
+        gap: 2rem;
+    }
+
+    .profile-left {
+        margin-top: 0;
     }
 
     .profile-right {
+        align-items: center;
+    }
+
+    .profile-intro h2::after {
+        margin-left: auto;
+        margin-right: auto;
+        transform-origin: center;
+    }
+
+    .profile-right p {
+        font-size: 1.02rem;
         text-align: left;
     }
 
-    .profile-intro h1 {
-        text-align: center;
-        font-size: 2rem;
-        color: #1a5943;
-        margin-bottom: 0.5rem;
+    .list-search {
+        max-width: none;
     }
 
-    .profile-intro h2 {
-        text-align: center;
-        font-size: 1.5rem;
-        color: #1a5943;
-        margin-bottom: 0.5rem;
+    .list-search kbd {
+        display: none;
     }
 
-    .publications-columns {
-        flex-direction: column;
+    .publication-card {
+        --row-inset: 0.75rem;
     }
 
-    .publication-header {
-        flex-direction: column;
-        align-items: flex-start;
+    /* ID, venue and year on one line, the paper below */
+    .pub-head {
+        display: none;
     }
 
-    .badge {
-        margin-right: 0;
-        margin-bottom: 0.5rem;
+    .publications-page .publication-card {
+        grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+        align-items: center;
+        row-gap: 0.5rem;
     }
 
+    .pub-venue {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pub-main,
+    .pub-media {
+        grid-column: 1 / -1;
+    }
+
+    .pub-main {
+        grid-row: 2;
+    }
+
+    .pub-media {
+        grid-row: 3;
+        margin-top: 0;
+    }
+}
+
+/* ==========================================================================
+   Motion
+   ========================================================================== */
+
+/* Animated background drawn by script.js: kept faint, and fainter behind the text column */
+.bg-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.45) 28%, rgba(0, 0, 0, 0.45) 72%, #000);
+    mask-image: linear-gradient(to right, #000, rgba(0, 0, 0, 0.45) 28%, rgba(0, 0, 0, 0.45) 72%, #000);
+}
+
+/* The bright green needs less opacity on the dark background */
+:root[data-theme="dark"] .bg-canvas {
+    opacity: 0.5;
+}
+
+/* Scroll reveal: script.js adds .reveal, then .is-visible when in view */
+.reveal {
+    opacity: 0;
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    animation: fadeIn 0.6s var(--reveal-delay, 0s) ease backwards;
+}
+
+/* Theme switch spreads out from the toggle (see script.js) */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* Moving between pages: the content fades out and the new one rises in, the navbar stays put and
+   the background cross-fades. Browsers without cross-document View Transitions just switch pages. */
+@view-transition {
+    navigation: auto;
+}
+
+.content {
+    view-transition-name: page;
+}
+
+.bg-canvas {
+    view-transition-name: bg;
+}
+
+/* Only the page changes use these names; the theme switch reveals the whole page at once */
+html.theme-switching .content,
+html.theme-switching .bg-canvas {
+    view-transition-name: none;
+}
+
+::view-transition-group(page) {
+    animation: none;
+}
+
+::view-transition-old(page) {
+    animation: pageOut 0.16s ease-in both;
+}
+
+::view-transition-new(page) {
+    animation: pageIn 0.38s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes pageOut {
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes pageIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@keyframes pageFadeOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+    }
+}
+
+/* Where page transitions run, they replace the content's own entrance fade */
+@supports (view-transition-name: none) {
+    .content {
+        animation: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Page changes keep a plain fade, without movement */
+    ::view-transition-old(page) {
+        animation-name: pageFadeOut;
+    }
+
+    ::view-transition-new(page) {
+        animation-name: pageFadeIn;
+    }
 }

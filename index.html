@@ -4,26 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Antonio Vitale | Home</title>
+  <script>
+    /* Dark by default; a theme the visitor picked with the toggle wins. Applied before first paint */
+    document.documentElement.dataset.theme = "dark";
+    try {
+      document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";
+    } catch (e) {}
+  </script>
 
   <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
   />
 
   <link rel="stylesheet" href="assets/css/style.css" />
 
   <link
     rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
   />
 </head>
 <body>
   <nav class="navbar">
-    <div class="nav-logo">
-      <a href="/">
-        Antonio Vitale
-      </a>
-    </div>
 
     <div class="hamburger-menu" id="hamburger-menu">
       <i class="fas fa-bars"></i>
@@ -35,6 +37,11 @@
       <li><a href="publications/"><i class="fas fa-book"></i> Publications</a></li>
       <li><a href="service/"><i class="fas fa-hands-helping"></i> Service</a></li>
     </ul>
+
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark theme">
+      <i class="fas fa-moon"></i>
+      <i class="fas fa-sun"></i>
+    </button>
   </nav>
 
   <main class="content">
@@ -43,10 +50,10 @@
         <div class="profile-left">
           <img src="assets/images/profile.jpg" alt="Profile Photo" />
           <div class="social-row">
-            <a href="mailto:antonio.vitale@polito.it" target="_blank"><i class="fas fa-envelope"></i></a>
+            <a href="mailto:antonio.vitale@unimol.it" target="_blank"><i class="fas fa-envelope"></i></a>
             <a href="https://scholar.google.com/citations?user=AdVTnyQAAAAJ&hl=it" target="_blank"><i class="fas fa-graduation-cap"></i></a>
             <a href="https://github.com/vitaleantonio" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://x.com/vitaleantonio7" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://x.com/vitaleantonio7" target="_blank"><i class="fab fa-x-twitter"></i></a>
           </div>
         </div>
         <div class="profile-right">
@@ -56,7 +63,7 @@
             I am a PhD student at <a href="https://www.polito.it/" class="custom-link" target="_blank">Politecnico di Torino</a> and <a href="https://www3.unimol.it/" class="custom-link" target="_blank">University of Molise</a> of the  <a href="https://www.phd-ai.it/" class="custom-link" target="_blank">National PhD in Artificial Intelligence for Industry 4.0</a>, advised by Prof. <a href="https://dibt.unimol.it/staff/sscalabrino/" class="custom-link" target="_blank">Simone Scalabrino</a> and co-advised by Prof. <a href="https://dibt.unimol.it/staff/oliveto/" class="custom-link" target="_blank">Rocco Oliveto</a>.
           </p>
           <p>
-            My research lies at the intersection of <span class="subtle-bold">AI</span> and <span class="subtle-bold">Software Engineering</span>, studying how the <span class="subtle-bold">quality</span> of training data impacts LLMs performance in code-related tasks.
+            My research lies at the intersection of <span class="subtle-bold">AI</span> and <span class="subtle-bold">Software Engineering</span>, studying how the <span class="subtle-bold">quality</span> of data impacts LLMs performance in code-related tasks.
           </p>
         </div>
       </div>
@@ -82,6 +89,6 @@
     <p>© 2024 Antonio Vitale. All rights reserved.</p>
   </footer>
 
-  <script src="/assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 </body>
 </html>
